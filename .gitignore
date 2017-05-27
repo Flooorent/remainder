@@ -22,3 +22,6 @@ project/plugins/project/
 
 # Scala style
 scalastyle_config.xml
+
+# personal data
+src/main/resources/
