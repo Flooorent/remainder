@@ -1,10 +1,3 @@
-import java.io.InputStream
-
-import scala.io.Source
-
-import net.liftweb.json.{DefaultFormats, parse}
-
-
 object Main {
 
   /** args(0): to (gmail)
@@ -13,16 +6,7 @@ object Main {
     */
   def main(args: Array[String]): Unit = {
 
-    implicit val formats = DefaultFormats
-
-    val fileStream: InputStream = getClass.getResourceAsStream("/birthdays.txt")
-
-    val people: Iterator[Person] = Source
-      .fromInputStream(fileStream)
-      .getLines
-      .map(person => parse(person).extract[Person])
-
-    val content: String = people.mkString("\n")
+    val content: String = Util.retrievePeople().mkString("\n")
 
     val mail = new MailAgent(
       to = args(0),
