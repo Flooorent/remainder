@@ -1,3 +1,7 @@
+import com.github.nscala_time.time.Imports.{DateTime, LocalDate}
+import Birthday._
+
+
 object Main {
 
   /** args(0): to (gmail)
@@ -6,7 +10,14 @@ object Main {
     */
   def main(args: Array[String]): Unit = {
 
-    val content: String = Util.retrievePeople(Util.birthdaysPath).mkString("\n")
+    val today = new LocalDate(DateTime.now)
+    val people: Seq[Person] = Util.retrievePeople(Util.birthdaysPath)
+
+    val birthdaysOfTheDay: Seq[Person] = getBirthdaysOfTheDay(people, today)
+    val birthdaysOfTheWeek: Seq[Person] = getBirthdaysOfTheWeek(people, today)
+    val birthdaysOfTheMonth: Seq[Person] = getBirthdaysOfTheMonth(people, today)
+
+    val content: String = Content.formatAllBirthdays(birthdaysOfTheDay, birthdaysOfTheWeek, birthdaysOfTheMonth)
 
     val mail = new MailAgent(
       to = args(0),
