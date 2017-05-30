@@ -12,7 +12,7 @@ object Util {
     * @param birthdaysPath: file path to people with their birthdays in json format
     * @return all people from birthdays file
     */
-  def retrievePeople(birthdaysPath: String): Iterator[Person] = {
+  def retrievePeople(birthdaysPath: String): Seq[Person] = {
     implicit val formats = DefaultFormats
 
     val fileStream: InputStream = getClass.getResourceAsStream(birthdaysPath)
@@ -21,5 +21,6 @@ object Util {
       .fromInputStream(fileStream)
       .getLines
       .map(person => parse(person).extract[Person])
+      .toSeq
   }
 }

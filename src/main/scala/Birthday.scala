@@ -12,33 +12,35 @@ case class Person(name: String, surname: String, birthday: Birthday) {
 
 object Birthday {
 
-  def getFollowingWeekBirthdays(people: Iterator[Person], month: Int, day: Int): Iterator[Person] =
-    getFollowingBirthdays(people, month, day, 6)
-
-  def getFollowingMonthBirthdays(people: Iterator[Person], month: Int, day: Int): Iterator[Person] =
-    getFollowingBirthdays(people, month, day, 30)
-
-
-  /** Return all people that have their birthdays in the interval [(day, month), (day, month) + span]
+  /** Return all people that have their birthdays in the interval [(day, month) + minDays, (day, month) + maxDays]
     *
     * @param people: people to filter
-    * @param month: month from which to start the scan
-    * @param day: day from which to start the scan
-    * @param span: number of days that define the window
+    * @param date: date from which to create the interval
+    * @param minDays: number of days to add to date to get the interval's lower bound
+    * @param maxDays: number of days to add to date to get the interval's upper bound
     * @return all people whose birthdays belong to the specified interval
     */
-  def getFollowingBirthdays(people: Iterator[Person], month: Int, day: Int, span: Int): Iterator[Person] = {
-    val date: LocalDate = new LocalDate(DateTime.now.getYear, month, day)
-
+  def getComingBirthdays(people: Seq[Person], date: LocalDate, minDays: Int, maxDays: Int): Seq[Person] =
     people
       .filter { case Person(name, surname, birthday) =>
         val nextBirthday: LocalDate =
-          if (birthday.month < month) // to handle edge cases when we start towards the end of the year
+          if (birthday.month < date.getMonthOfYear) // to handle edge cases when we start towards the end of the year
             new LocalDate(date.getYear + 1, birthday.month, birthday.day)
           else
             new LocalDate(date.getYear, birthday.month, birthday.day)
 
-        (date <= nextBirthday) && (nextBirthday <= (date + span.days))
+        (date + minDays.days <= nextBirthday) && (nextBirthday <= date + maxDays.days)
       }
-  }
+
+
+  def getBirthdaysOfTheDay(people: Seq[Person], date: LocalDate): Seq[Person] =
+    getComingBirthdays(people, date, 0, 0)
+
+  /** NB: we don't count the first day as part of the week! */
+  def getBirthdaysOfTheWeek(people: Seq[Person], date: LocalDate): Seq[Person] =
+    getComingBirthdays(people, date, 1, 7)
+
+  /** NB: we don't count the first week as part of the month! */
+  def getBirthdaysOfTheMonth(people: Seq[Person], date: LocalDate): Seq[Person] =
+    getComingBirthdays(people, date, 8, 30)
 }
