@@ -12,29 +12,32 @@ case class Person(name: String, surname: String, birthday: Birthday) {
 
 object Birthday {
 
-  def getFollowingWeekBirthdays(day: Int, month: Int): Iterator[Person] =
-    getFollowingBirthdays(day, month, 6)
+  def getFollowingWeekBirthdays(people: Iterator[Person], month: Int, day: Int): Iterator[Person] =
+    getFollowingBirthdays(people, month, day, 6)
 
-  def getFollowingMonthBirthdays(day: Int, month: Int): Iterator[Person] =
-    getFollowingBirthdays(day, month, 30)
+  def getFollowingMonthBirthdays(people: Iterator[Person], month: Int, day: Int): Iterator[Person] =
+    getFollowingBirthdays(people, month, day, 30)
 
 
   /** Return all people that have their birthdays in the interval [(day, month), (day, month) + span]
     *
-    * @param day: day from which to start the scan
+    * @param people: people to filter
     * @param month: month from which to start the scan
+    * @param day: day from which to start the scan
     * @param span: number of days that define the window
     * @return all people whose birthdays belong to the specified interval
     */
-  def getFollowingBirthdays(day: Int, month: Int, span: Int): Iterator[Person] = {
-    val date: DateTime = DateTime.now.month(month).day(day)
+  def getFollowingBirthdays(people: Iterator[Person], month: Int, day: Int, span: Int): Iterator[Person] = {
+    val date: LocalDate = new LocalDate(DateTime.now.getYear, month, day)
 
-    // TODO: bug: critical case on two years
-    // TODO: unit tests
-    Util
-      .retrievePeople()
+    people
       .filter { case Person(name, surname, birthday) =>
-        val nextBirthday: DateTime = date.month(birthday.month).day(birthday.day)
+        val nextBirthday: LocalDate =
+          if (birthday.month < month) // to handle edge cases when we start towards the end of the year
+            new LocalDate(date.getYear + 1, birthday.month, birthday.day)
+          else
+            new LocalDate(date.getYear, birthday.month, birthday.day)
+
         (date <= nextBirthday) && (nextBirthday <= (date + span.days))
       }
   }

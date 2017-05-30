@@ -1,0 +1,3 @@
+{"name": "john", "surname": "doe", "birthday": {"year": 1958, "month": 8, "day": 17}}
+{"name": "jane", "surname": "moe", "birthday": {"year": 1990, "month": 9, "day": 18}}
+{"name": "sherlock", "surname": "holmes", "birthday": {"month": 1, "day": 6}}

@@ -6,7 +6,7 @@ object Main {
     */
   def main(args: Array[String]): Unit = {
 
-    val content: String = Util.retrievePeople().mkString("\n")
+    val content: String = Util.retrievePeople(Util.birthdaysPath).mkString("\n")
 
     val mail = new MailAgent(
       to = args(0),

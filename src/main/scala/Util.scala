@@ -9,9 +9,10 @@ object Util {
 
 
   /**
+    * @param birthdaysPath: file path to people with their birthdays in json format
     * @return all people from birthdays file
     */
-  def retrievePeople(): Iterator[Person] = {
+  def retrievePeople(birthdaysPath: String): Iterator[Person] = {
     implicit val formats = DefaultFormats
 
     val fileStream: InputStream = getClass.getResourceAsStream(birthdaysPath)
