@@ -28,6 +28,6 @@ object Content {
         val locale = new Locale("en")
         val dayOfWeek: String = date.dayOfWeek.getAsText(locale)
         val monthOfYear: String = date.monthOfYear.getAsText(locale)
-        s"    - $name $surname: $dayOfWeek, ${date.getDayOfWeek} $monthOfYear"}).mkString("\n")
+        s"    - $name $surname: $dayOfWeek, ${date.getDayOfMonth} $monthOfYear"}).mkString("\n")
 
 }
