@@ -18,16 +18,25 @@ object Content {
       ).mkString("\n\n")
 
 
-  // TODO: order birthdays
   def formatBirthdays(header: String, birthdays: Seq[Person]): String =
     if (birthdays.isEmpty)
       s"$header: nobody"
     else
-      (s"$header:" +: birthdays.map{case Person(name, surname, birthday) =>
-        val date = new LocalDate(DateTime.now.getYear, birthday.month, birthday.day)
-        val locale = new Locale("en")
-        val dayOfWeek: String = date.dayOfWeek.getAsText(locale)
-        val monthOfYear: String = date.monthOfYear.getAsText(locale)
-        s"    - $name $surname: $dayOfWeek, ${date.getDayOfMonth} $monthOfYear"}).mkString("\n")
+      (s"$header:" +: birthdays
+        .sortBy{case Person(_, _, birthday) => (birthday.month, birthday.day)}
+        .map{case Person(name, surname, birthday) =>
+          val date = new LocalDate(DateTime.now.getYear, birthday.month, birthday.day)
+          val locale = new Locale("en")
+          formatBirthdayEntry(name, surname, date, locale)
+        }).mkString("\n")
 
+
+  def formatBirthdayEntry(name: String, surname: String, date: LocalDate, locale: Locale): String = {
+    val dayOfWeek: String = date.dayOfWeek.getAsText(locale)
+    val monthOfYear: String = date.monthOfYear.getAsText(locale)
+    s"    - ${formatName(name)} ${formatName(surname)}: $dayOfWeek, ${date.getDayOfMonth} $monthOfYear"
+  }
+
+
+  def formatName(name: String): String = name.toLowerCase.capitalize
 }
