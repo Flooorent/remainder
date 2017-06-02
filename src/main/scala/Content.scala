@@ -6,16 +6,23 @@ object Content {
 
 
   // TODO: add french locale => replace "This Day" by "Aujourd'hui"
-  // TODO: add current date to "This day"
   def formatAllBirthdays(
-    bDayOfTheDay: Seq[Person],
-    bDayOfTheWeek: Seq[Person],
-    bDayOfTheMonth: Seq[Person]): String =
-      Seq(
-        formatBirthdays("This day", bDayOfTheDay),
-        formatBirthdays("This week", bDayOfTheWeek),
-        formatBirthdays("This month", bDayOfTheMonth)
-      ).mkString("\n\n")
+      bDayOfTheDay: Seq[Person],
+      bDayOfTheWeek: Seq[Person],
+      bDayOfTheMonth: Seq[Person]): String = {
+
+    val today: LocalDate = new LocalDate(DateTime.now)
+    val dayOfWeek: String = today.dayOfWeek.getAsText(new Locale("en"))
+    val monthOfYear: String = today.monthOfYear.getAsText(new Locale("en"))
+
+    Seq(
+      s"$dayOfWeek ${today.getDayOfMonth} $monthOfYear ${today.getYear}",
+      formatBirthdays("This day", bDayOfTheDay),
+      formatBirthdays("This week", bDayOfTheWeek),
+      formatBirthdays("This month", bDayOfTheMonth)
+    ).mkString("\n\n")
+  }
+
 
 
   def formatBirthdays(header: String, birthdays: Seq[Person]): String =
@@ -34,7 +41,7 @@ object Content {
   def formatBirthdayEntry(name: String, surname: String, date: LocalDate, locale: Locale): String = {
     val dayOfWeek: String = date.dayOfWeek.getAsText(locale)
     val monthOfYear: String = date.monthOfYear.getAsText(locale)
-    s"    - ${formatName(name)} ${formatName(surname)}: $dayOfWeek, ${date.getDayOfMonth} $monthOfYear"
+    s"    - ${formatName(name)} ${formatName(surname)}: $dayOfWeek ${date.getDayOfMonth} $monthOfYear"
   }
 
 
