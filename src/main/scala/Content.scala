@@ -4,37 +4,34 @@ import com.github.nscala_time.time.Imports.{DateTime, LocalDate}
 
 object Content {
 
-
-  // TODO: add french locale => replace "This Day" by "Aujourd'hui"
   def formatAllBirthdays(
       bDayOfTheDay: Seq[Person],
       bDayOfTheWeek: Seq[Person],
-      bDayOfTheMonth: Seq[Person]): String = {
+      bDayOfTheMonth: Seq[Person],
+      language: Language): String = {
 
     val today: LocalDate = new LocalDate(DateTime.now)
-    val dayOfWeek: String = today.dayOfWeek.getAsText(new Locale("en"))
-    val monthOfYear: String = today.monthOfYear.getAsText(new Locale("en"))
+    val dayOfWeek: String = today.dayOfWeek.getAsText(language.locale)
+    val monthOfYear: String = today.monthOfYear.getAsText(language.locale)
 
     Seq(
       s"$dayOfWeek ${today.getDayOfMonth} $monthOfYear ${today.getYear}",
-      formatBirthdays("This day", bDayOfTheDay),
-      formatBirthdays("This week", bDayOfTheWeek),
-      formatBirthdays("This month", bDayOfTheMonth)
+      formatBirthdays(language.thisDay, bDayOfTheDay, language),
+      formatBirthdays(language.thisWeek, bDayOfTheWeek, language),
+      formatBirthdays(language.thisMonth, bDayOfTheMonth, language)
     ).mkString("\n\n")
   }
 
 
-
-  def formatBirthdays(header: String, birthdays: Seq[Person]): String =
+  def formatBirthdays(header: String, birthdays: Seq[Person], language: Language): String =
     if (birthdays.isEmpty)
-      s"$header: nobody"
+      s"$header: ${language.nobody}"
     else
       (s"$header:" +: birthdays
         .sortBy{case Person(_, _, birthday) => (birthday.month, birthday.day)}
         .map{case Person(name, surname, birthday) =>
           val date = new LocalDate(DateTime.now.getYear, birthday.month, birthday.day)
-          val locale = new Locale("en")
-          formatBirthdayEntry(name, surname, date, locale)
+          formatBirthdayEntry(name, surname, date, language.locale)
         }).mkString("\n")
 
 

@@ -10,6 +10,8 @@ object Main {
     */
   def main(args: Array[String]): Unit = {
 
+    val language = Language.withName("en")
+
     val today = new LocalDate(DateTime.now)
     val people: Seq[Person] = Util.retrievePeople(Util.birthdaysPath)
 
@@ -17,7 +19,11 @@ object Main {
     val birthdaysOfTheWeek: Seq[Person] = getBirthdaysOfTheWeek(people, today)
     val birthdaysOfTheMonth: Seq[Person] = getBirthdaysOfTheMonth(people, today)
 
-    val content: String = Content.formatAllBirthdays(birthdaysOfTheDay, birthdaysOfTheWeek, birthdaysOfTheMonth)
+    val content: String = Content.formatAllBirthdays(
+      birthdaysOfTheDay,
+      birthdaysOfTheWeek,
+      birthdaysOfTheMonth,
+      language)
 
     val mail = new MailAgent(
       to = args(0),
